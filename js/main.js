@@ -5,16 +5,11 @@ require(
             name: 'physicsjs',
             location: 'js/physicsjs',
             main: 'physicsjs'
-        },
-		{
-            name: 'jQuery',
-            location: 'js/jquery',
-            main: 'jquery'
-		}]
+        }]
   },
   [
   'require',
-  'jQuery',
+  'js/other/jquery',
   'physicsjs',
   'physicsjs/renderers/canvas',
   'physicsjs/bodies/circle',
@@ -52,77 +47,33 @@ var objStyles = {
 
 Physics.body('sling', 'rectangle', function( parent ){
 	return {
-
 		spin: function( speed ){
 			this.state.angular.vel = speed;
 		}
 	};
 });
 
-function loadObjects(world)
+
+function loadObjects(world, map)
 {
-	// ball = Physics.body('circle', {
-	// 	x: 50,
-	// 	y: 30,
-	// 	vx: 0.2,
-	// 	vy: 0.1,
-	// 	radius: 20,
-	// 	id: 'ball1',
-	// 	labels: ['target'],
-	// });
-    // ball.view = new Image();
-    // ball.view.src = require.toUrl('gfx/planet.png');
+	for(e in map)
+	{
+		setup = map[e].setup;
+		delete map[e].setup;
+		
+		object = Physics.body(setup.type, map[e]);
 
-	// world.add(ball);
+		if(setup.image)
+		{
+			object.view = new Image();
+			object.view.src = require.toUrl(setup.image);
+		}
 
-	ball2 = Physics.body('circle', {
-		x: 150,
-		y: 130,
-		vx: 0,
-		vy: 0,
-		radius: 20,
-		id: 'ball2',
-		labels: ['target'],
-		restitution: 0.6
-	});
-	// ball2.sleep(true)
-	world.add(ball2);
+		if(setup.sleep)
+			object.sleep(setup.sleep)
 
-	sling = Physics.body('sling', {
-		x: 250,
-		y: 330,
-		width: 20,
-		height: 100,
-		treatment: 'static',
-		id: 'sling'
-	});
-	// ball2.sleep(true)
-	world.add(sling);
-
-	land = Physics.body('convex-polygon', {
-		x: 100,
-		y: 250,
-		vertices: [
-			{ x: 0, y: 0 },
-			{ x: 0, y: 20 },
-			{ x: 180, y: 20 },
-			{ x: 200, y: 0 }
-		],
-		treatment: 'static',
-	});
-	world.add(land);
-
-
-	obstacle = Physics.body('rectangle', {
-		x: 200,
-		y: 215,
-		width: 10,
-		height: 50,
-		labels: ['obstacle'],
-		restitution: 0.6
-	});
-	// obstacle.sleep(true)
-	world.add(obstacle);
+		world.add(object);
+	}
 }
 
 function setupWorld(world)
@@ -224,13 +175,19 @@ function setupActions(world)
 	});
 }
 
-function init(world)
+function init(mapString)
 {
-	loadObjects(world);
-	setupWorld(world);
-	setupActions(world);
+	var map = JSON.parse(mapString);
+	var settings = {timestep: 1000.0 / 160, maxIPF: 16, integrator: 'verlet'};
+	Physics(settings, function initWorld(world){
+			loadObjects(world, map);
+			setupWorld(world);
+			setupActions(world);
+		});
 }
 
-Physics({timestep: 1000.0 / 160, maxIPF: 16, integrator: 'verlet'}, init);
+// TODO Load that with require not as ajax
+$.get('levels/' + location.search.substr(1) + '.lvl', init)
+	.fail(function(){alert("Could not find given level")});
 });
 
