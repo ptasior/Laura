@@ -3,10 +3,10 @@
 		"setup":{
 			"type": "circle",
 			"sleep": false,
-			"image": "gfx/planet.png"
+			"image": "gfx/pig.png"
 			},
 		"id": "ball",
-		"x": 150,
+		"x": 520,
 		"y": 130,
 		"vx": 0,
 		"vy": 0,
@@ -16,14 +16,15 @@
 	},
 	{
 		"setup":{
-			"type": "convex-polygon"
+			"type": "convex-polygon",
+			"image": "gfx/land.png"
 			},
 		"id": "shelf",
-		"x": 100,
+		"x": 500,
 		"y": 250,
 		"vertices": [
 			{"x": 0,   "y": 0},
-			{"x": 0,   "y": 20},
+			{"x": 20,   "y": 20},
 			{"x": 180, "y": 20},
 			{"x": 200, "y": 0}
 		],
@@ -31,20 +32,22 @@
 	},
 	{
 		"setup":{
-			"type": "rectangle"
+			"type": "rectangle",
+			"image": "gfx/wall.png"
 			},
-		"x": 200,
+		"x": 450,
 		"y": 215,
 		"width": 10,
 		"height": 50,
 		"labels": ["obstacle"],
-		"restitution": 0.6
+		"restitution": 0.6,
+		"mass":20
 	},
 	{
 		"setup":{
 			"type": "sling"
 			},
-		"x": 250,
+		"x": 50,
 		"y": 330,
 		"width": 20,
 		"height": 100,

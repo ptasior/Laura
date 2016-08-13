@@ -108,6 +108,8 @@ function setupWorld(world)
 		world.step(time);
 	});
 	Physics.util.ticker.start();
+
+	// $('#'+canvasName).width(viewWidth).height(viewHeight);
 }
 
 function setupActions(world)
@@ -162,8 +164,8 @@ function setupActions(world)
 		var found = Physics.util.find(data.collisions, query);
 		if ( found )
 		{
-			// alert('win');
-			console.log('win')
+			alert('You win');
+			// console.log('win')
 			todel = Physics.util.filter(data.collisions, query);
 			console.log(todel)
 			for(i=0; i < todel.length; i++)
@@ -188,6 +190,9 @@ function init(mapString)
 
 // TODO Load that with require not as ajax
 $.get('levels/' + location.search.substr(1) + '.lvl', init)
-	.fail(function(){alert("Could not find given level")});
+	.fail(function(){
+			alert("Could not find given level");
+			window.history.back();
+		});
 });
 
