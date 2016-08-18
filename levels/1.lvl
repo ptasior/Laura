@@ -1,3 +1,15 @@
+{
+"world":
+{
+	"width": 500,
+	"height": 300,
+	"edge_collision-off":{
+			"restitution": 0.40,
+			"cof": 0.99
+		},
+	"constant_acceleration":{}
+},
+"objects":
 [
 	{
 		"setup":{
@@ -8,6 +20,21 @@
 		"id": "ball",
 		"x": 520,
 		"y": 130,
+		"vx": 0,
+		"vy": 0,
+		"radius": 20,
+		"labels": ["target"],
+		"restitution": 0.6
+	},
+	{
+		"setup":{
+			"type": "circle",
+			"sleep": true,
+			"image": "gfx/pig.png"
+			},
+		"id": "ball",
+		"x": 120,
+		"y": 230,
 		"vx": 0,
 		"vy": 0,
 		"radius": 20,
@@ -55,4 +82,5 @@
 		"id": "sling"
 	}
 ]
+}
 

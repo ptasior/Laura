@@ -17,8 +17,7 @@ require(
 ],
 function(events, jQuery, Physics)
 {
-Physics.body('sling', 'rectangle', function( parent ){
-return {
+Physics.body('sling', 'rectangle', function(parent){ return {
 	init: function(options)
 	{
 		parent.init.call(this, options);
@@ -68,10 +67,26 @@ return {
 		this._world.add(ball);
 
 		this.shootStart = null;
-	}
-};
-});
+	},
+}});
 
+Physics.body('pig', 'circle', function(parent){ return {
+	init: function(options)
+	{
+		parent.init.call(this, options);
+	},
+
+	collide: function(e)
+	{
+		// if(!e.labels) return;
+		// if($.inArray('bullet', e.labels) != -1)
+		// {
+		// 	this._world.remove(e)
+		// 	this._world.remove(this)
+		// 	alert('you win');
+		// }
+	}
+}});
 });
 
 

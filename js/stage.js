@@ -25,10 +25,6 @@ require(
 ],
 function(require, jQuery, types, events, Physics)
 {
-var viewWidth = 500;
-var viewHeight = 300;
-var canvasName = 'viewport';
-
 var objStyles = {
 			'circle' : {
 				strokeStyle: '#351024',
@@ -68,12 +64,12 @@ function loadObjects(world, map)
 	}
 }
 
-function setupWorld(world)
+function setupWorld(world, config)
 {
 	var renderer = Physics.renderer('canvas', {
-			el: canvasName,
-			width: viewWidth,
-			height: viewHeight,
+			el: 'viewport',
+			width: config.width,
+			height: config.height,
 			meta: false,
 			styles: objStyles
 		});
@@ -83,18 +79,23 @@ function setupWorld(world)
 			world.render();
 		});
 
-	var viewportBounds = Physics.aabb(0, 0, viewWidth, viewHeight);
 
-	// world.add(Physics.behavior('edge-collision-detection', {
-	// 	aabb: viewportBounds,
-	// 	restitution: 0.40,
-	// 	cof: 0.99
-	// }));
+	if('edge_collision' in config)
+	{
+		var cfg = $.extend({}, config.edge_collisions);
+		cfg.aabb = Physics.aabb(0, 0, config.width, config.height);
+		world.add(Physics.behavior('edge-collision-detection', cfg));
+	}
+
+	if('constant_acceleration' in config)
+	{
+		var cfg = $.extend({}, config.constant_acceleration);
+		world.add(Physics.behavior('constant-acceleration', cfg));
+	}
 
 	world.add(Physics.behavior('body-collision-detection'));
 	world.add(Physics.behavior('sweep-prune'));
 	world.add(Physics.behavior('body-impulse-response'));
-	world.add(Physics.behavior('constant-acceleration'));
 
 	Physics.util.ticker.on(function(time, dt){
 		world.step(time);
@@ -115,29 +116,36 @@ function setupActions(world)
 			events.emit('MouseUp', e);
 		});
 
-	var query = Physics.query({
-		$or: [
-			{ bodyA: { labels: 'bullet' }, bodyB: { labels: 'target' } }
-			,{ bodyB: { labels: 'bullet' }, bodyA: { labels: 'target' } }
-		]
-	});
+	$(document).click(function(e){ 
+			events.emit('Click', e);
+		});
 
-	// monitor collisions
+	var queryBulletTarget = Physics.query({$or: [
+			{bodyA: {labels:'bullet'}, bodyB: {labels:'target'}},
+			{bodyB: {labels:'bullet'}, bodyA: {labels:'target'}}
+		]});
+
 	world.on('collisions:detected', function(data, e){
-		var found = Physics.util.find(data.collisions, query);
-		if ( found )
-		{
-			alert('You win');
-			// console.log('win')
-			todel = Physics.util.filter(data.collisions, query);
-			console.log(todel)
-			for(i=0; i < todel.length; i++)
+			for(var i=0; i < data.collisions.length; i++)
+				if('collide' in data.collisions[i].bodyA)
+					data.collisions[i].bodyA.collide(data.collisions[i].bodyB)
+				else if('collide' in data.collisions[i].bodyB)
+					data.collisions[i].bodyA.collide(data.collisions[i].bodyB)
+
+			if(Physics.util.find(data.collisions, queryBulletTarget))
 			{
-				world.remove(todel[i].bodyA)
-				world.remove(todel[i].bodyB)
+				todel = Physics.util.filter(data.collisions, queryBulletTarget);
+				for(var i=0; i < todel.length; i++)
+				{
+					world.remove(todel[i].bodyA)
+					world.remove(todel[i].bodyB)
+				}
+
+				// Check if all targets are removed
+				if(!world.findOne({labels:'target'}))
+					alert('You win');
 			}
-		}
-	});
+		});
 }
 
 function init(mapString)
@@ -145,8 +153,8 @@ function init(mapString)
 	var map = JSON.parse(mapString);
 	var settings = {timestep: 1000.0 / 160, maxIPF: 16, integrator: 'verlet'};
 	Physics(settings, function initWorld(world){
-			loadObjects(world, map);
-			setupWorld(world);
+			loadObjects(world, map.objects);
+			setupWorld(world, map.world);
 			setupActions(world);
 		});
 }
