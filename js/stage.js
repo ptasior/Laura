@@ -10,6 +10,8 @@ require(
   [
   'require',
   'js/other/jquery',
+  'js/types',
+  'js/events',
   'physicsjs',
   'physicsjs/renderers/canvas',
   'physicsjs/bodies/circle',
@@ -19,14 +21,13 @@ require(
   'physicsjs/behaviors/body-collision-detection',
   'physicsjs/behaviors/body-impulse-response',
   'physicsjs/behaviors/edge-collision-detection',
-  'physicsjs/behaviors/constant-acceleration'
+  'physicsjs/behaviors/constant-acceleration',
 ],
-function(require, jQuery, Physics)
+function(require, jQuery, types, events, Physics)
 {
 var viewWidth = 500;
 var viewHeight = 300;
 var canvasName = 'viewport';
-var shootStart = null;
 
 var objStyles = {
 			'circle' : {
@@ -44,15 +45,6 @@ var objStyles = {
 				fillStyle: 'black',
 			}
 	};
-
-Physics.body('sling', 'rectangle', function( parent ){
-	return {
-		spin: function( speed ){
-			this.state.angular.vel = speed;
-		}
-	};
-});
-
 
 function loadObjects(world, map)
 {
@@ -112,44 +104,15 @@ function setupWorld(world)
 	// $('#'+canvasName).width(viewWidth).height(viewHeight);
 }
 
+
 function setupActions(world)
 {
-	var canvas = $('#'+canvasName);
 	$(document).mousedown(function(e){ 
-			var offset = canvas.offset();
-			var pos = Physics.vector(e.pageX - offset.left, e.pageY - offset.top);
-			var body = world.findOne({
-				$at: pos
-			})
-
-			console.log(body);
-			if(body.id != 'sling') return;
-
-			shootStart = pos;
+			events.emit('MouseDown', e);
 		});
 
 	$(document).mouseup(function(e){ 
-			if(!shootStart) return;
-
-			var sx = shootStart.x;
-			var sy = shootStart.y;
-			var offset = canvas.offset();
-			shootStart.sub(e.pageX - offset.left, e.pageY - offset.top);
-
-			console.log('shoot!', sx, sy, shootStart.x, shootStart.y);
-
-			ball = Physics.body('circle', {
-				x: sx,
-				y: sy,
-				vx: shootStart.x/100,
-				vy: shootStart.y/100,
-				restitution: 0.70,
-				radius: 5,
-				labels: ['bullet']
-			});
-			world.add(ball);
-
-			shootStart = null;
+			events.emit('MouseUp', e);
 		});
 
 	var query = Physics.query({
@@ -191,8 +154,8 @@ function init(mapString)
 // TODO Load that with require not as ajax
 $.get('levels/' + location.search.substr(1) + '.lvl', init)
 	.fail(function(){
-			alert("Could not find given level");
-			window.history.back();
+			// alert("Could not find given level");
+			// window.history.back();
 		});
 });
 
