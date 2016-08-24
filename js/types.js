@@ -64,7 +64,7 @@ Physics.body('sling', 'rectangle', function(parent){ return {
 			radius: 5,
 			labels: ['bullet']
 		});
-		this._world.add(ball);
+		this._world.addWrapper(ball);
 
 		this.shootStart = null;
 	},

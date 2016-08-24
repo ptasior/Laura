@@ -71,7 +71,8 @@ function setupWorld(world, config)
 			width: config.width,
 			height: config.height,
 			meta: false,
-			styles: objStyles
+			styles: objStyles,
+			autoResize: false
 		});
 
 	world.add(renderer);
@@ -93,7 +94,16 @@ function setupWorld(world, config)
 		world.add(Physics.behavior('constant-acceleration', cfg));
 	}
 
-	world.add(Physics.behavior('body-collision-detection'));
+	
+	world.bcd_behaviour = Physics.behavior('body-collision-detection');
+	world.bcd_behaviour.applyTo(world.find({labels:{$nin:['no-collision']}}));
+	world.add(world.bcd_behaviour);
+
+	world.addWrapper = function(e){
+			world.add(e);
+			world.bcd_behaviour.applyTo(world.find({labels:{$nin:['no-collision']}}));
+		};
+
 	world.add(Physics.behavior('sweep-prune'));
 	world.add(Physics.behavior('body-impulse-response'));
 
@@ -102,7 +112,7 @@ function setupWorld(world, config)
 	});
 	Physics.util.ticker.start();
 
-	// $('#'+canvasName).width(viewWidth).height(viewHeight);
+	$('#viewport').width(config.width).height(config.height);
 }
 
 
@@ -121,8 +131,8 @@ function setupActions(world)
 		});
 
 	var queryBulletTarget = Physics.query({$or: [
-			{bodyA: {labels:'bullet'}, bodyB: {labels:'target'}},
-			{bodyB: {labels:'bullet'}, bodyA: {labels:'target'}}
+			{bodyA:{labels:'bullet'}, bodyB:{labels:'target'}},
+			{bodyB:{labels:'bullet'}, bodyA:{labels:'target'}}
 		]});
 
 	world.on('collisions:detected', function(data, e){

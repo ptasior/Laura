@@ -1,8 +1,8 @@
 {
 "world":
 {
-	"width": 500,
-	"height": 300,
+	"width": 700,
+	"height": 400,
 	"edge_collision-off":{
 			"restitution": 0.40,
 			"cof": 0.99
@@ -66,7 +66,7 @@
 		"y": 215,
 		"width": 10,
 		"height": 50,
-		"labels": ["obstacle"],
+		"labels": ["obstacle", "no-collision"],
 		"restitution": 0.6,
 		"mass":20
 	},
