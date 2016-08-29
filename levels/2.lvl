@@ -1,0 +1,123 @@
+{
+"world":
+{
+	"width": 700,
+	"height": 400,
+	"edge_collision":{
+			"restitution": 0.90,
+			"cof": 0.99
+		},
+	"constant_acceleration":{}
+},
+"objects":
+[
+	{
+		"setup":{
+			"type": "circle",
+			"sleep": true,
+			"image": "gfx/pig.png"
+			},
+		"id": "ball",
+		"x": 420,
+		"y": 300,
+		"vx": 0,
+		"vy": 0,
+		"radius": 20,
+		"labels": ["target"],
+		"restitution": 0.6
+	},
+	{
+		"setup":{
+			"type": "convex-polygon"
+			},
+		"id": "obstacle",
+		"x": 300,
+		"y": 300,
+		"vertices": [
+			{"x":194, "y":382},
+			{"x":210, "y":353},
+			{"x":266, "y":261},
+			{"x":316, "y":228},
+			{"x":396, "y":199},
+			{"x":454, "y":205},
+			{"x":464, "y":242},
+			{"x":409, "y":298},
+			{"x":341, "y":341},
+			{"x":262, "y":375},
+			{"x":198, "y":385}
+		],
+		"treatment": "static"
+	},
+	{
+		"setup":{
+			"type": "convex-polygon"
+			},
+		"id": "base",
+		"x": 500,
+		"y": 390,
+		"vertices": [
+			{"x":0, "y":20},
+			{"x":10, "y":0},
+			{"x":20, "y":20}
+		],
+		"treatment": "static"
+	},
+	{
+		"setup":{
+			"type": "rectangle"
+			},
+		"id": "arm",
+		"x": 500,
+		"y": 369,
+		"width": 200,
+		"height": 10,
+		"restitution": 0.1
+	},
+	{
+		"setup":{
+			"type": "circle",
+			"sleep": true
+			},
+		"id": "silver-bullet",
+		"x": 419,
+		"y": 360,
+		"radius": 5,
+		"labels": ["bullet"]
+	},
+	{
+		"setup":{
+			"type": "circle",
+			"sleep": true
+			},
+		"id": "silver-bullet2",
+		"x": 580,
+		"y": 360,
+		"radius": 5,
+		"labels": ["bullet"]
+	},
+	{
+		"setup":{
+			"type": "sling",
+			"image": "gfx/handle.png"
+			},
+		"x": 50,
+		"y": 330,
+		"width": 20,
+		"height": 100,
+		"treatment": "static",
+		"id": "sling",
+		"rubber": {
+			"x": 50,
+			"y": 330,
+			"width": 10,
+			"height": 50,
+			"image": "gfx/rubber.png"
+			},
+		"bullet": {
+			"mass": 1,
+			"image": "gfx/bullet.png"
+			}
+	}
+]
+}
+

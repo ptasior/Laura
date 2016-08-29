@@ -83,7 +83,7 @@ function setupWorld(world, config)
 
 	if('edge_collision' in config)
 	{
-		var cfg = $.extend({}, config.edge_collisions);
+		var cfg = $.extend({}, config.edge_collision);
 		cfg.aabb = Physics.aabb(0, 0, config.width, config.height);
 		world.add(Physics.behavior('edge-collision-detection', cfg));
 	}
