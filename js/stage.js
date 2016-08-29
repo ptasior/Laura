@@ -126,6 +126,10 @@ function setupActions(world)
 			events.emit('MouseUp', e);
 		});
 
+	$(document).mousemove(function(e){ 
+			events.emit('MouseMove', e);
+		});
+
 	$(document).click(function(e){ 
 			events.emit('Click', e);
 		});
@@ -153,7 +157,10 @@ function setupActions(world)
 
 				// Check if all targets are removed
 				if(!world.findOne({labels:'target'}))
+				{
 					alert('You win');
+					window.history.back();
+				}
 			}
 		});
 }
@@ -172,8 +179,8 @@ function init(mapString)
 // TODO Load that with require not as ajax
 $.get('levels/' + location.search.substr(1) + '.lvl', init)
 	.fail(function(){
-			// alert("Could not find given level");
-			// window.history.back();
+			alert("Could not find given level");
+			window.history.back();
 		});
 });
 

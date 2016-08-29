@@ -72,14 +72,26 @@
 	},
 	{
 		"setup":{
-			"type": "sling"
+			"type": "sling",
+			"image": "gfx/handle.png"
 			},
 		"x": 50,
 		"y": 330,
 		"width": 20,
 		"height": 100,
 		"treatment": "static",
-		"id": "sling"
+		"id": "sling",
+		"rubber": {
+			"x": 50,
+			"y": 330,
+			"width": 10,
+			"height": 50,
+			"image": "gfx/rubber.png"
+			},
+		"bullet": {
+			"mass": 1,
+			"image": "gfx/bullet.png"
+			}
 	}
 ]
 }

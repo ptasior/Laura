@@ -20,9 +20,28 @@ function(events, jQuery, Physics)
 Physics.body('sling', 'rectangle', function(parent){ return {
 	init: function(options)
 	{
+		// console.log(options)
 		parent.init.call(this, options);
 		events.registerEv('MouseDown', this.mouseDown.bind(this));
 		events.registerEv('MouseUp',   this.mouseUp.bind(this));
+		events.registerEv('MouseMove', this.mouseMove.bind(this));
+
+		this.rubber = Physics.body('rectangle', {
+				x: options.rubber.x,
+				y: options.rubber.y,
+				width: options.rubber.height,
+				height: options.rubber.width,
+				hidden: true,
+				treatment: 'static',
+				labels: ['no-colision']
+			});
+
+		if(options.rubber.image)
+		{
+			this.rubber.view = new Image();
+			this.rubber.view.src = require.toUrl(options.rubber.image);
+		}
+
 
 		this.shootStart = null;
 	},
@@ -37,10 +56,25 @@ Physics.body('sling', 'rectangle', function(parent){ return {
 			$at: pos
 		})
 
-		console.log(body);
 		if(body.id != 'sling') return;
 
-		this.shootStart = pos;
+		this.shootStart = Physics.vector(this.state.pos.x, this.state.pos.y);
+		this._world.addWrapper(this.rubber);
+		this.rubber.hidden = false;
+	},
+
+	mouseMove: function(e)
+	{
+		if(this.rubber.hidden) return;
+
+		var canvas = $('#viewport');
+		var offset = canvas.offset();
+		var currPos = Physics.vector(e.pageX - offset.left, e.pageY - offset.top);
+		var vec = currPos.vsub(this.shootStart);
+		this.rubber.state.angular.pos = vec.angle();
+		// this.rubber.height = vec.dist(Physics.vector(0,0));
+		// this.rubber.width = vec.dist(Physics.vector(0,0));
+		// this.rubber.recalc()
 	},
 
 	mouseUp: function(e)
@@ -67,6 +101,7 @@ Physics.body('sling', 'rectangle', function(parent){ return {
 		this._world.addWrapper(ball);
 
 		this.shootStart = null;
+		this.rubber.hidden = true;
 	},
 }});
 
